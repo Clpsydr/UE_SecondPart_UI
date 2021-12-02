@@ -7,7 +7,7 @@
 class UButton;
 class UCheckBox;
 class USlider;
-class UComboBox;
+class UComboBoxString;
 class UWidgetSwitcher;
 
 UCLASS()
@@ -55,7 +55,7 @@ protected:
 		USlider* GraphicSettingSlider;
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))
-		UComboBox* ShadowsSettingCombo;
+		UComboBoxString* ShadowsSettingCombo;
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))
 		UCheckBox* IsVsyncEnabledBullet;
