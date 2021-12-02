@@ -8,10 +8,12 @@ class UUserWidget;
 UENUM()
 enum class EWidgetEnum : uint8
 {
+	Wid_None,
 	Wid_GameplayHUD,
 	Wid_Inventory,
 	Wid_PauseMenu,
-	Wid_Library
+	Wid_Library,
+	Wid_GameOver,
 };
 
 UCLASS()
