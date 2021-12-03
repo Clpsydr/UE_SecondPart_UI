@@ -7,6 +7,8 @@
 #include "StatsComponent.h"
 #include "distanceCharacter.generated.h"
 
+class UWidgetComponent;
+
 UCLASS(Blueprintable)
 class AdistanceCharacter : public ACharacter, public IDamageable
 {
@@ -35,6 +37,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Components")
 		class UStatsComponent* PlayerStats;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
+		UWidgetComponent* PlayerStatusWidget;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
+		TSubclassOf<class UUserWidget> StatusWidgetClass;
+
 	bool IsAlive();
 
 private:
@@ -51,5 +59,8 @@ private:
 	class UDecalComponent* CursorToWorld;
 
 	void Harm(float Points);
+
+	UFUNCTION(BlueprintCallable, Category = "Methods")
+	void UpdateWidgets();
 };
 

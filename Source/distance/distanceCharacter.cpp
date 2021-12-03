@@ -5,11 +5,14 @@
 #include "Components/DecalComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/BoxComponent.h"
+#include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
+#include "StatusBar.h"
+#include "Blueprint/UserWidget.h"
 #include "Materials/Material.h"
 #include "Engine/World.h"
 
@@ -55,6 +58,11 @@ AdistanceCharacter::AdistanceCharacter()
 
 	// Extra components
 	PlayerStats = CreateDefaultSubobject<UStatsComponent>(TEXT("Player Stats"));
+
+	// UI components
+	PlayerStatusWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("StatusBar"));
+	PlayerStatusWidget->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	PlayerStatusWidget->SetWidgetClass(StatusWidgetClass);
 
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
@@ -122,4 +130,15 @@ bool AdistanceCharacter::IsAlive()
 void AdistanceCharacter::TakeDamage(const FDamageReport& DamageReport)
 {
 	Harm(DamageReport.DamageValue);
+	UpdateWidgets();
 }
+
+void AdistanceCharacter::UpdateWidgets()
+{
+	if (PlayerStatusWidget->GetWidget())
+	{
+		UStatusBar* Status = Cast<UStatusBar>(PlayerStatusWidget->GetUserWidgetObject());
+		Status->UpdateHP(HealthPoints / 50.f);
+	}
+}
+
