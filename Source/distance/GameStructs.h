@@ -36,3 +36,34 @@ struct FArmorIntegrity
 		UPROPERTY()
 			float RLEg;
 };
+
+USTRUCT(BlueprintType)
+struct FDrawnGeometry
+{
+	GENERATED_BODY()
+
+		UPROPERTY()
+		TArray <FVector2D> GeometryPoints;
+
+	UPROPERTY()
+		FString GeomName;
+};
+
+USTRUCT(BlueprintType)
+struct FMinimapData
+{
+	GENERATED_BODY()
+
+		UPROPERTY()
+			TArray<FBox2D> GeometryPoints;
+
+		UPROPERTY()
+			TMap<int32, FVector2D> PlayerPoints;
+
+		UPROPERTY()
+			TMap<int32, FVector2D> EnemyPoints;
+
+		UPROPERTY()
+			FDrawnGeometry DrawObjectSet;
+};
+

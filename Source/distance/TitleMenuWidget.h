@@ -94,6 +94,8 @@ protected:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))
 		UCheckBox* InvertMouseBullet;
 	//
+//	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))
+//		UNativeWidgetHost* RadioButtonsHost;
 
 	UFUNCTION()   //necessary for binding dynamic delegates
 		void OnNewGameClicked();
@@ -157,7 +159,4 @@ protected:
 
 public:
 	virtual void NativeConstruct() override;
-
-private:
-	
 };
