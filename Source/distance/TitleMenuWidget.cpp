@@ -5,6 +5,7 @@
 #include "Components/Slider.h"
 #include "Components/ComboBoxString.h"
 #include "Components/WidgetSwitcher.h"
+#include "Components/NativeWidgetHost.h"
 #include "Kismet/GameplayStatics.h"
 
 void UTitleMenuWidget::NativeConstruct()
@@ -150,7 +151,7 @@ void UTitleMenuWidget::OnReturnClicked()
 void UTitleMenuWidget::OnOptionsClicked()
 {
 	GEngine->AddOnScreenDebugMessage(INDEX_NONE, 2.f, FColor::Blue, TEXT("Clicked on options!"));
-	MenuSwitcher->SetActiveWidgetIndex(1);			// This is really bad (hidden implied order of menus) but im running out of time
+	MenuSwitcher->SetActiveWidgetIndex(1);			// This is really bad (hidden implied order of menus) 
 }
 
 void UTitleMenuWidget::OnGraphicSectionClicked()

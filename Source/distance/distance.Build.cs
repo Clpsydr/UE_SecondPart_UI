@@ -19,5 +19,11 @@ public class distance : ModuleRules
 			"UMG",
 		});
 
+
+		PrivateDependencyModuleNames.AddRange(new string[]
+		{
+			"Slate",
+			"SlateCore",
+		});
     }
 }
