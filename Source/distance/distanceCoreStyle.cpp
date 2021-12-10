@@ -18,13 +18,12 @@ TSharedPtr<ISlateStyle> FindStyle()
 
 	// this method is for loading directly from disk
 	// whats the difference? we just dont know.
-	FString Path = FPaths::ProjectContentDir() / TEXT("/TopDownCPP/UI");
-	
-	TSharedPtr<FSlateStyleSet> Style = FSlateGameResources::New(FName("CoreStyle"), Path, Path);
+	FString Path = FPaths::ProjectContentDir() / TEXT("/TopDownCPP/UI/Styles");
+	TSharedPtr<FSlateStyleSet> Style = FSlateGameResources::New(FName("WS_DefaultStyle"), Path, Path);
 
 	Style->Set("Red", FLinearColor::Red);
 	Style->Set("DefaultPadding", FMargin(15.f));
-	Style->Set("BgImg", new IMAGE_BRUSH("BGImg", FVector2D(256.f)));
+	Style->Set("BGImg", new IMAGE_BRUSH("BGImg", FVector2D(256.f)));
 
 	//TSharedPtr<ISlateStyle> Style = FSlateGameResources::New(FName("MyCoreStyle"), ScopeToDirectory, ScopeToDirectory);
 	// unclear why ScopeToDirectory is here twice, requires a scope to look for in certain location regardless

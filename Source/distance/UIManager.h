@@ -5,7 +5,7 @@
 
 class UUserWidget;
 
-UENUM()
+UENUM(BlueprintType)
 enum class EWidgetEnum : uint8
 {
 	Wid_None,

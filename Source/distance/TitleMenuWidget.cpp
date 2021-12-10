@@ -29,28 +29,28 @@ void UTitleMenuWidget::NativeConstruct()
 
 	if (OptionsButton)
 	{
-		OptionsButton->OnPressed.AddDynamic(this, &ThisClass::OnOptionsClicked);
+		OptionsButton->OnClicked.AddDynamic(this, &ThisClass::OnOptionsClicked);
 	}
 
 	//
 	if (GraphicOptionButton)
 	{
-		OptionsButton->OnPressed.AddDynamic(this, &ThisClass::OnGraphicSectionClicked);
+		GraphicOptionButton->OnPressed.AddDynamic(this, &ThisClass::OnGraphicSectionClicked);
 	}
 
 	if (SoundOptionButton)
 	{
-		OptionsButton->OnPressed.AddDynamic(this, &ThisClass::OnSoundSectionClicked);
+		SoundOptionButton->OnPressed.AddDynamic(this, &ThisClass::OnSoundSectionClicked);
 	}
 
 	if (ControlOptionButton)
 	{
-		OptionsButton->OnPressed.AddDynamic(this, &ThisClass::OnControlsSectionClicked);
+		ControlOptionButton->OnPressed.AddDynamic(this, &ThisClass::OnControlsSectionClicked);
 	}
 
 	if (BackToRootMenuButton)
 	{
-		OptionsButton->OnPressed.AddDynamic(this, &ThisClass::OnReturnToRootClicked);
+		BackToRootMenuButton->OnClicked.AddDynamic(this, &ThisClass::OnReturnToRootClicked);
 	}
 	//
 
@@ -150,7 +150,6 @@ void UTitleMenuWidget::OnReturnClicked()
 
 void UTitleMenuWidget::OnOptionsClicked()
 {
-	GEngine->AddOnScreenDebugMessage(INDEX_NONE, 2.f, FColor::Blue, TEXT("Clicked on options!"));
 	MenuSwitcher->SetActiveWidgetIndex(1);			// This is really bad (hidden implied order of menus) 
 }
 

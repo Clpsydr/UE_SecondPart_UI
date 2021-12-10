@@ -20,8 +20,6 @@ public:
 
 	SLATE_ATTRIBUTE(FMinimapData, MapInfoInput)			// Incoming drawing data
 
-	//SLATE_EVENT(FOnGameUpdated, OnGameUpdated)
-
 	SLATE_END_ARGS()
 
 	/** Constructs this widget with InArgs */
