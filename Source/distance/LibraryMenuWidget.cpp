@@ -14,8 +14,8 @@ void ULibraryMenuWidget::NativePreConstruct()
 
 	if (LibWidget)
 	{
-		//Probably crashes here? Maybe I get the style name wrong
-		LibWidget->CustomStyle = FdistanceCoreStyle::Get().GetWidgetStyle<FCustomSlateStyle>("CoreStyle");
+		//now it just doesnt exist instead of crashing, I guess thats better.
+		LibWidget->CustomStyle = FdistanceCoreStyle::Get().GetWidgetStyle<FCustomSlateStyle>("WS_DefaultStyle");
 	}
 
 	if (CloseButton)
