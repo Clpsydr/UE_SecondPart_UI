@@ -2,27 +2,44 @@
 
 UStatsComponent::UStatsComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
+}
 
-	// ...
+void UStatsComponent::TakeDamage(const FDamageReport& DmgReport)
+{
+	float DamageValue = DmgReport.DamageValue;
+	ModifyHealth(DamageValue);
+
+	if (CurrentHealth == 0.f)
+	{
+		if (OnDie.IsBound())
+		{
+			OnDie.Broadcast();
+		}
+	}
+	else
+	{
+		if (OnHealthChanged.IsBound())
+		{
+			OnHealthChanged.Broadcast(DamageValue);
+		}
+	}
+}
+
+float UStatsComponent::GetHealth(bool bIsRatio)
+{
+	return bIsRatio ? CurrentHealth / MaxHealth : CurrentHealth;
+}
+
+void UStatsComponent::ModifyHealth(float HPValue)
+{
+	CurrentHealth = FMath::Clamp(CurrentHealth + HPValue, 0.f, MaxHealth);
 }
 
 // Called when the game starts
 void UStatsComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// ...
-	
-}
-
-// Called every frame
-void UStatsComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
+	CurrentHealth = MaxHealth;
 }
 

@@ -10,18 +10,32 @@
 AdistancePlayerController::AdistancePlayerController()
 {
 	bShowMouseCursor = true;
+	
 	DefaultMouseCursor = EMouseCursor::Crosshairs;
+
+	MouseControlMode = EControlMode::AimControlMode;
+
 }
 
 void AdistancePlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
 
-	// keep updating the destination every tick while desired
-	if (bMoveToMouseCursor)
+	bEnableClickEvents = true;  // might need to turn it off in case it will screw something up
+
+	if (MouseControlMode == EControlMode::AimControlMode)
 	{
-		MoveToMouseCursor();
+		// keep updating the destination every tick while desired
+		if (bMoveToMouseCursor)
+		{
+			MoveToMouseCursor();
+		}
 	}
+	else
+	{
+		/// inventory management actions
+	}
+	
 }
 
 void AdistancePlayerController::SetupInputComponent()
@@ -29,19 +43,19 @@ void AdistancePlayerController::SetupInputComponent()
 	// set up gameplay key bindings
 	Super::SetupInputComponent();
 
-	InputComponent->BindAction("SetDestination", IE_Pressed, this, &AdistancePlayerController::OnSetDestinationPressed);
-	InputComponent->BindAction("SetDestination", IE_Released, this, &AdistancePlayerController::OnSetDestinationReleased);
+	if (InputComponent)
+	{
+		InputComponent->BindAction("SetDestination", IE_Pressed, this, &AdistancePlayerController::OnSetDestinationPressed);
+		InputComponent->BindAction("SetDestination", IE_Released, this, &AdistancePlayerController::OnSetDestinationReleased);
 
-	// support touch devices 
-	InputComponent->BindTouch(EInputEvent::IE_Pressed, this, &AdistancePlayerController::MoveToTouchLocation);
-	InputComponent->BindTouch(EInputEvent::IE_Repeat, this, &AdistancePlayerController::MoveToTouchLocation);
+		// support touch devices 
+		InputComponent->BindTouch(EInputEvent::IE_Pressed, this, &AdistancePlayerController::MoveToTouchLocation);
+		InputComponent->BindTouch(EInputEvent::IE_Repeat, this, &AdistancePlayerController::MoveToTouchLocation);
 
-	InputComponent->BindAction("ResetVR", IE_Pressed, this, &AdistancePlayerController::OnResetVR);
-}
+		InputComponent->BindKey(EKeys::LeftMouseButton, IE_Released, this, &ThisClass::OnLeftMouseButtonUp);
 
-void AdistancePlayerController::OnResetVR()
-{
-	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
+		InputComponent->BindAction("ControlTypeChange", IE_Pressed, this, &ThisClass::SwitchMouseControlMode);
+	}
 }
 
 void AdistancePlayerController::MoveToMouseCursor()
@@ -109,4 +123,27 @@ void AdistancePlayerController::OnSetDestinationReleased()
 {
 	// clear flag to indicate we should stop updating the destination
 	bMoveToMouseCursor = false;
+}
+
+void AdistancePlayerController::SwitchMouseControlMode()
+{
+	if (MouseControlMode == EControlMode::AimControlMode)
+	{
+		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 2.f, FColor::White, TEXT("Inventory mode"));
+		MouseControlMode = EControlMode::InventoryControlMode;
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 2.f, FColor::White, TEXT("Movement mode"));
+		MouseControlMode = EControlMode::AimControlMode;
+	}
+}
+
+void AdistancePlayerController::OnLeftMouseButtonUp()
+{
+	if (MouseControlMode == EControlMode::InventoryControlMode)
+	{
+		OnMouseButtonUp.Broadcast();
+	}
+	
 }

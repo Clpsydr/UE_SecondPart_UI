@@ -72,6 +72,7 @@ AdistanceCharacter::AdistanceCharacter()
 void AdistanceCharacter::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
+	UpdateWidgets();
 
 	if (CursorToWorld != nullptr && IsAlive())
 	{
@@ -138,7 +139,7 @@ void AdistanceCharacter::UpdateWidgets()
 	if (PlayerStatusWidget->GetWidget())
 	{
 		UStatusBar* Status = Cast<UStatusBar>(PlayerStatusWidget->GetUserWidgetObject());
-		Status->UpdateHP(HealthPoints / 50.f);
+		Status->UpdateHP(PlayerStats->GetHealth(true));
 	}
 }
 

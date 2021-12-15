@@ -67,3 +67,24 @@ struct FMinimapData
 			FDrawnGeometry DrawObjectSet;
 };
 
+USTRUCT(BlueprintType)
+struct FEnemyData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadOnly)
+		FString Name;
+
+	UPROPERTY(BlueprintReadOnly)
+		FString Description;
+
+	UPROPERTY(BlueprintReadOnly)
+		UTexture2D* Icon;
+
+	UPROPERTY(BlueprintReadOnly)
+		float Health;
+
+	UPROPERTY(BlueprintReadOnly)
+		float Range;
+};
+

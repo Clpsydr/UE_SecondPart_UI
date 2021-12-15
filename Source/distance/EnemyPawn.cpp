@@ -4,6 +4,7 @@
 #include "Components/ArrowComponent.h"
 #include "Components/BoxComponent.h"
 #include "Components/WidgetComponent.h"
+#include "StatsComponent.h"
 #include "StatusBar.h"
 #include "Blueprint/UserWidget.h"
 #include "distanceCharacter.h"
@@ -23,7 +24,8 @@ AEnemyPawn::AEnemyPawn()
 	HitCollider = CreateDefaultSubobject<UBoxComponent>(TEXT("hit collider"));
 	HitCollider->AttachToComponent(BodyMesh, FAttachmentTransformRules::KeepRelativeTransform);
 
-	CurrentHealth = MaxHealth;
+	EnemyStats = CreateDefaultSubobject<UStatsComponent>(TEXT("Enemy Stats"));
+	CurrentHealth = EnemyStats->MaxHealth;
 
 	StatusWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("StatusBar"));
 	StatusWidget->AttachToComponent(BodyMesh, FAttachmentTransformRules::KeepRelativeTransform);
@@ -37,27 +39,20 @@ void AEnemyPawn::BeginPlay()
 	bIsReadyToFire = true;
 	PlayerPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
 
-	
-
 	if (StatusWidget->GetWidget())
 	{
 		UStatusBar* Status = Cast<UStatusBar>(StatusWidget->GetUserWidgetObject());
-		Status->UpdateName(ProvisionalName);
+		Status->UpdateName(EnemyStats->Name);
 	}
 }
 
 void AEnemyPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (PlayerPawn && bIsReadyToFire && Cast<AdistanceCharacter>(PlayerPawn)->IsAlive())
+	if (PlayerPawn && bIsAggressive && Cast<AdistanceCharacter>(PlayerPawn)->IsAlive())
 	{
-		// give it a rotation to position of playerpawn
-		FRotator NewAngle = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), PlayerPawn->GetActorLocation());
-		NewAngle.Pitch = BodyMesh->GetComponentRotation().Pitch;
-		NewAngle.Roll = BodyMesh->GetComponentRotation().Roll;
-		ProjectileSource->SetWorldRotation(NewAngle);
-
-		if (FVector::DistSquared(PlayerPawn->GetActorLocation(), GetActorLocation()) < FMath::Square(FireRange))
+		TurnTo();
+		if (InRange(PlayerPawn->GetActorLocation(), GetActorLocation(), FireRange) && bIsReadyToFire)
 			{
 				Fire();
 			}
@@ -76,6 +71,20 @@ void AEnemyPawn::Tick(float DeltaTime)
 	UpdateWidgets();
 }
 
+bool AEnemyPawn::InRange(FVector OriginLoc, FVector TargetLoc, float Range)
+{
+	return FVector::DistSquared(OriginLoc, TargetLoc) < FMath::Square(Range);
+}
+
+void AEnemyPawn::TurnTo()   //allegedly should turn to whoever instead of just player like now
+{
+	// give it a rotation to position of playerpawn
+	FRotator NewAngle = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), PlayerPawn->GetActorLocation());
+	NewAngle.Pitch = BodyMesh->GetComponentRotation().Pitch;
+	NewAngle.Roll = BodyMesh->GetComponentRotation().Roll;
+	ProjectileSource->SetWorldRotation(NewAngle);
+}
+
 void AEnemyPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -91,6 +100,17 @@ void AEnemyPawn::Fire()
 	GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &AEnemyPawn::Reload, ReloadTime, false);
 }
 
+FEnemyData AEnemyPawn::GetStats()
+{
+	FEnemyData NewInfo;
+	NewInfo.Name = EnemyStats->Name;
+	NewInfo.Description = EnemyStats->Description;
+	NewInfo.Health = EnemyStats->MaxHealth;
+	NewInfo.Icon = MapIcon;
+
+	return NewInfo;
+}
+
 void AEnemyPawn::Reload()
 {
 	bIsReadyToFire = true;
@@ -101,6 +121,6 @@ void AEnemyPawn::UpdateWidgets()
 	if (StatusWidget->GetWidget())
 	{
 		UStatusBar* Status = Cast<UStatusBar>(StatusWidget->GetUserWidgetObject());
-		Status->UpdateHP(CurrentHealth / MaxHealth);
+		Status->UpdateHP(CurrentHealth / EnemyStats->MaxHealth);
 	}
 }
