@@ -17,6 +17,8 @@ public class distance : ModuleRules
 			"NavigationSystem", 
 			"AIModule",
 			"UMG",
+			"Inventory",		
+			"DesktopPlatform"
 		});
 
 

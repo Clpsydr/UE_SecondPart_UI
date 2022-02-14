@@ -6,6 +6,9 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/BoxComponent.h"
 #include "Components/WidgetComponent.h"
+#include "InventoryComponent.h"
+#include "EquipComponent.h"
+#include "InventoryManagerComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -67,13 +70,75 @@ AdistanceCharacter::AdistanceCharacter()
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
+
+	// Attaching inventory and inv manager
+	PInventory = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory"));
+	PInvManager = CreateDefaultSubobject<UInventoryManagerComponent>(TEXT("Inventory Manager"));
+	PEquip = CreateDefaultSubobject<UEquipComponent>(TEXT("Equipment"));
+}
+
+void AdistanceCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+void AdistanceCharacter::EquipItem(EEquipType Slot, FName ItemId)
+{
+	const auto* ItemInfo = PInvManager->GetItemData(ItemId);
+
+	// applying mesh if present
+	UStaticMeshComponent* EquippedModel = GetEquipComponent(Slot);
+	if (EquippedModel)
+	{
+		EquippedModel->SetStaticMesh(ItemInfo->Mesh.LoadSynchronous());
+		EquippedModel->SetHiddenInGame(false);
+	}
+
+	//applying normal stat bonus
+	PlayerStats->ApplyStatBonus(ItemInfo);
+}
+
+void AdistanceCharacter::UnequipItem(EEquipType Slot, FName ItemId)
+{
+	UStaticMeshComponent* EquippedModel = GetEquipComponent(Slot);
+	if (EquippedModel)
+	{
+		EquippedModel->SetHiddenInGame(true);
+	}
+
+	PlayerStats->RemoveStatBonus(PInvManager->GetItemData(ItemId));
+}
+
+UStaticMeshComponent* AdistanceCharacter::GetEquipComponent(EEquipType EquipType)
+{
+	FName Tag;
+
+	switch (EquipType)
+	{
+		case EEquipType::Es_Head: Tag = "HeadSlot"; break;
+		case EEquipType::Es_Back: Tag = "BackSlot"; break;
+		case EEquipType::Es_Belt: Tag = "BeltSlot"; break;
+		case EEquipType::Es_Body: Tag = "BodySlot"; break;
+		case EEquipType::Es_Weapon: Tag = "WeaponSlot"; break;
+		case EEquipType::Es_Buff: Tag = "BuffSlot"; break;
+		default: return nullptr;
+	}
+
+	TArray<UActorComponent*> SlotFound = GetComponentsByTag(UStaticMeshComponent::StaticClass(), Tag);
+	
+	// Assuming there is only one equip slot of each type!!!
+	return SlotFound.IsValidIndex(0) ? Cast<UStaticMeshComponent>(SlotFound[0]) : nullptr;
 }
 
 void AdistanceCharacter::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
-	UpdateWidgets();
-
+		// temp shelter for stat updates
+	PlayerStats->ModifyHealth(PlayerStats->HPRegen);
+	PlayerStats->ArmorUpdate();
+		// widget init
+	UpdateWidgets();						
+	
 	if (CursorToWorld != nullptr && IsAlive())
 	{
 		if (UHeadMountedDisplayFunctionLibrary::IsHeadMountedDisplayEnabled())
@@ -100,32 +165,54 @@ void AdistanceCharacter::Tick(float DeltaSeconds)
 			CursorToWorld->SetWorldRotation(CursorR);
 		}
 	}
-
 }
 
 void AdistanceCharacter::Death()
 {
-	TArray<USceneComponent*>	 Skeletons;
+	TArray<USceneComponent*> Skeletons;
 	RootComponent->GetChildrenComponents(false, Skeletons);
 	for (auto component : Skeletons)
 	{
 		component->SetHiddenInGame(true);
 	}
+
 	GetController()->UnPossess();
 }
 
 void AdistanceCharacter::Harm(float Points)
 {
-	HealthPoints -= Points;
+	PlayerStats->ModifyHealth(-Points);
 	if (!IsAlive())
 	{
 		Death();
 	}
 }
 
+void AdistanceCharacter::GenerateItems(const TArray<FEquipSlot>& NewItems)
+{
+	if (PInvManager)
+	{
+		GLog->Log(ELogVerbosity::Display, *FString::Printf(TEXT("Got class related items")));
+		PInvManager->SupplyItemSet(NewItems, PInventory);
+	}
+}
+
 bool AdistanceCharacter::IsAlive()
 {
-	return (HealthPoints > 0);
+	return (PlayerStats->GetHealth(false) > 0);
+}
+
+void AdistanceCharacter::OpenChest(UInventoryComponent* ChestInventory)
+{
+	if (ChestInventory)
+	{
+		PInvManager->ShowChest(ChestInventory);
+	}
+	else
+	{
+		PInvManager->HideChest();
+	}
+		
 }
 
 void AdistanceCharacter::TakeDamage(const FDamageReport& DamageReport)
@@ -139,7 +226,7 @@ void AdistanceCharacter::UpdateWidgets()
 	if (PlayerStatusWidget->GetWidget())
 	{
 		UStatusBar* Status = Cast<UStatusBar>(PlayerStatusWidget->GetUserWidgetObject());
-		Status->UpdateHP(PlayerStats->GetHealth(true));
+		Status->UpdateCompact(PlayerStats->GetShortenedParams());
 	}
 }
 

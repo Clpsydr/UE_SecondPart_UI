@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "GameStructs.h"
+#include "distance/GameStructs.h"
 #include "ItemDropperWidget.generated.h"
 
 class UImage;

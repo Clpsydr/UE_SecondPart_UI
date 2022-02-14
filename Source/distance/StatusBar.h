@@ -1,6 +1,7 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "GameStructs.h"
 #include "StatusBar.generated.h"
 
 class UProgressBar;
@@ -17,7 +18,16 @@ protected:
 
 	// TODO: as an alternative, bind a container with them , and find children on construction
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))
-		TArray<UProgressBar*> ArmorSet;
+		UProgressBar* ArmorLH;
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))
+		UProgressBar* ArmorRH;
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))
+		UProgressBar* ArmorLL;
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))
+		UProgressBar* ArmorRL;
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))
 		UTextBlock* DisplayName;
@@ -30,8 +40,11 @@ public:
 	virtual void NativeConstruct() override;
 
 	virtual void UpdateHP(float NewFraction);
+	
+	virtual void UpdateCompact(TArray<float> ShortParams);
 
-	virtual void UpdateName(FString NewName) ;
+	void UpdateName(FString NewName);
+
 
 private:
 	

@@ -20,24 +20,6 @@ struct FDamageReport
 };
 
 USTRUCT(BlueprintType)
-struct FArmorIntegrity
-{
-	GENERATED_BODY()
-
-		UPROPERTY()
-			float LHand;
-
-		UPROPERTY()
-			float RHand;
-
-		UPROPERTY()
-			float LLeg;
-
-		UPROPERTY()
-			float RLEg;
-};
-
-USTRUCT(BlueprintType)
 struct FDrawnGeometry
 {
 	GENERATED_BODY()

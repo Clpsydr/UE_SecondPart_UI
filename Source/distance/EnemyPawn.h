@@ -20,6 +20,9 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	UPROPERTY()
+		APawn* PlayerPawn;
+
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
 		class UStaticMeshComponent* BodyMesh;
 
@@ -37,7 +40,7 @@ protected:
 		float ReloadTime = 0.5f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Firing")
-		float FireRange = 500.f;
+		float FireRange = 300.f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
 		UWidgetComponent* StatusWidget;
@@ -47,6 +50,8 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI")
 		bool bIsAggressive;
+
+	bool InRange(FVector OriginLoc, FVector TargetLoc, float Range);
 
 public:	
 	virtual void Tick(float DeltaTime) override;
@@ -69,8 +74,6 @@ public:
 		class UStatsComponent* EnemyStats;
 	
 private:
-	UPROPERTY()
-	APawn* PlayerPawn;
 
 	bool bIsReadyToFire;
 
@@ -79,6 +82,4 @@ private:
 	void UpdateWidgets();
 
 	FTimerHandle ReloadTimerHandle;
-
-	bool InRange(FVector OriginLoc, FVector TargetLoc, float Range);
 };

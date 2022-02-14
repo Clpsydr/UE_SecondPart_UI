@@ -15,6 +15,7 @@ enum class EWidgetEnum : uint8
 	Wid_Library,
 	Wid_GameOver,
 	Wid_DebugSelection,
+	Wid_ClassSelection,
 };
 
 UCLASS()

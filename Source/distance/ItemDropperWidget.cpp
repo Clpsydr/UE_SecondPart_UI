@@ -78,16 +78,15 @@ FReply UItemDropperWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, 
 
 void UItemDropperWidget::OnMouseButtonUp()
 {
-			// newcenter only on spawning
-			// newcenter only at all without bounds.
 	if (SpawnedActor)
 	{
 		FVector OldCenter;
 		FVector Bounds;
 		SpawnedActor->GetActorBounds(false, OldCenter, Bounds, true);
+		//Can't figure out combination of center and bounds that allows landing the object on surface
 
 		FVector NewCenter = SpawnedActor->GetActorLocation();
-		NewCenter.Z = 175.f;						//175.f + OldCenter.Z/Bounds.Z  sinks them at center level somehow
+		NewCenter.Z = 175.f;						
 		SpawnedActor->SetActorLocation(NewCenter);
 		SpawnedActor = nullptr;
 	}

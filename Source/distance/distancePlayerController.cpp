@@ -25,6 +25,7 @@ void AdistancePlayerController::PlayerTick(float DeltaTime)
 
 	if (MouseControlMode == EControlMode::AimControlMode)
 	{
+		
 		// keep updating the destination every tick while desired
 		if (bMoveToMouseCursor)
 		{
@@ -34,6 +35,7 @@ void AdistancePlayerController::PlayerTick(float DeltaTime)
 	else
 	{
 		/// inventory management actions
+		
 	}
 	
 }
@@ -131,11 +133,16 @@ void AdistancePlayerController::SwitchMouseControlMode()
 	{
 		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 2.f, FColor::White, TEXT("Inventory mode"));
 		MouseControlMode = EControlMode::InventoryControlMode;
+		
+
+		// hide inventory ui
 	}
 	else
 	{
 		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 2.f, FColor::White, TEXT("Movement mode"));
 		MouseControlMode = EControlMode::AimControlMode;
+
+		// show inventory ui
 	}
 }
 
