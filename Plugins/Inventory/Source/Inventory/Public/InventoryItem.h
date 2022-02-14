@@ -11,7 +11,7 @@ class UImage;
 class UTextBlock;
 
 UCLASS()
-class DISTANCE_API UInventoryItem : public UUserWidget
+class INVENTORY_API UInventoryItem : public UUserWidget
 {
 	GENERATED_BODY()
 

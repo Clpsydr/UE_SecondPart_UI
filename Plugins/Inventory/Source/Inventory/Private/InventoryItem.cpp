@@ -51,6 +51,13 @@ void UInventoryItem::NativeOnDragDetected(const FGeometry& InGeometry, const FPo
 	}
 }
 
+//unfinished function
+//The idea for solution was that I'd put every item in menuanchor, which would remain in the widget even when we remove all items.
+// then compare InGeometry of current widget to each anchor in the 
+//something like  FMath::Abs(InGeometry.AbsolutePosition.Y - anchor[i]->GetCachedGeometry().AbsolutePosition.Y)  
+//						< anchor[i].GetAbsoluteSize.Y / 2
+// is that even a sane way to do that.
+
 bool UInventoryItem::NativeOnDragOver(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
 	UMenuAnchor* ThisAnchor = Cast<UMenuAnchor>(GetParent());
@@ -58,18 +65,15 @@ bool UInventoryItem::NativeOnDragOver(const FGeometry& InGeometry, const FDragDr
 	UItemDragDropAction* ItemAction = Cast<UItemDragDropAction>(InOperation);
 	UWidget* DraggedWidget = ItemAction->DefaultDragVisual;
 
-	//removechild at 0 for each menuanchor
-	// in cycle:
-	//if current distance to anchor i less than anchor size, put in
-	// else put other elements in order...
 	if (VerticalBox && ItemAction && DraggedWidget && this != DraggedWidget)
 	{
-		const int32 IndexToAnchors = VerticalBox->GetChildIndex(DraggedWidget->GetParent());         //
+		const int32 IndexToAnchors = VerticalBox->GetChildIndex(DraggedWidget->GetParent());         
 
 		if (IndexToAnchors >= 0)
 		{
 			UMenuAnchor* DraggedMenu = Cast<UMenuAnchor>(VerticalBox->GetChildAt(IndexToAnchors));   //remembering current menu from anchors
 			DraggedMenu->RemoveChildAt(0);
+			
 
 			const TArray<UWidget*> AllAnchors = VerticalBox->GetAllChildren();
 			TArray<UWidget*> RestChildren;
@@ -81,8 +85,7 @@ bool UInventoryItem::NativeOnDragOver(const FGeometry& InGeometry, const FDragDr
 
 			for (int32 i = 0; i < AllAnchors.Num(); i++)
 			{
-				//applying that
-				//if (InGeometry.AbsolutePosition.Y > RestChildren[i]->GetCachedGeometry().AbsolutePosition.Y)
+				
 				
 				//VerticalBox->AddChildToVerticalBox(RestChildren[i])->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Center);
 

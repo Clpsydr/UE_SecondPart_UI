@@ -6,11 +6,8 @@
 #include "Blueprint/DragDropOperation.h"
 #include "ItemDragDropAction.generated.h"
 
-/**
- * 
- */
 UCLASS()
-class DISTANCE_API UItemDragDropAction : public UDragDropOperation
+class INVENTORY_API UItemDragDropAction : public UDragDropOperation
 {
 	GENERATED_BODY()
 
