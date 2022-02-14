@@ -1,0 +1,12 @@
+Row Name, Id,Name,Description,Type,Equip Type,Rarity,Icon,Mesh,Level,bStackable,Armor Bonus,Health Bonus,HPregen,Attack Bonus
+booster,booster,Booster,back equipment,It_Equip,Es_Back,Ir_Normal,Texture2D'/Game/TopDownCPP/Textures/booster1.booster1',,1,0,10,50,0.1,10
+helmet,helmet,Helmet,head equipment,It_Equip,Es_Head,Ir_Normal,Texture2D'/Game/TopDownCPP/Textures/helmet1.helmet1',,1,0,20,20,0.02,0
+sword,sword,Sword,Weapon 1,It_Equip,Es_Weapon,Ir_Normal,Texture2D'/Game/TopDownCPP/Textures/weap1.weap1',,1,0,0,0,0,20
+gun,gun,Gun,Weapon 2,It_Equip,Es_Weapon,Ir_Normal,Texture2D'/Game/TopDownCPP/Textures/gun1.gun1',,1,0,0,0,0,30
+armor,armor,Armor,torso equipment,It_Equip,Es_Body,Ir_Normal,Texture2D'/Game/TopDownCPP/Textures/helmet1.helmet1',,1,0,50,100,0.2,0
+batteries,batteries,Battery,Consumable 1,It_Ammo,Es_None,Ir_Normal,Texture2D'/Game/TopDownCPP/Textures/battery1.battery1',,1,1,0,0,0,0
+grenades,grenades,grenade,Consumable 2,It_Ammo,Es_None,Ir_Normal,Texture2D'/Game/TopDownCPP/Textures/grenade1.grenade1',,1,1,0,0,0,0
+beacon,beacon,Beacon,Consumable 3,It_Ammo,Es_None,Ir_Normal,Texture2D'/Game/TopDownCPP/Textures/beacon1.beacon1',,1,1,0,0,0,0
+keycard,keycard,Key,quest item 1,It_Quest,Es_None,Ir_Special,Texture2D'/Game/TopDownCPP/Textures/key1.key1',,1,0,0,0,0,0
+datapad,datapad,Datapad,quest item 2,It_Quest,Es_None,Ir_Special,Texture2D'/Game/TopDownCPP/Textures/datapad1.datapad1',,1,0,0,0,0,0
+matter,matter,Currency,currency item,It_Resource,Es_None,Ir_Rare,Texture2D'/Game/TopDownCPP/Textures/gold1.gold1',,1,1,0,0,0,0

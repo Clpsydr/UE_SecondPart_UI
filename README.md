@@ -1,3 +1,3 @@
-# UE_UIproject 
+# UI course project 
 
-# Attempt to work both on some 3d motion elements and UI at the same time.
+Mainly to practice UMG and related topics, also to refresh basics from the previous course.
