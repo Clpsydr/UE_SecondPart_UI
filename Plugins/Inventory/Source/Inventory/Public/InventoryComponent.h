@@ -25,7 +25,7 @@ public:
 
 	virtual void UseItem(int32 SlotIndex);
 
-	virtual int32 GetMaxItemAmount(int32 SlotIndex, const FEquipItem& InItem);
+	virtual int32 CheckSlotAvailability(int32 SlotIndex, const FEquipItem& InItem);
 
 	const TMap<int32, FEquipSlot>& GetAllItems() const { return Items; }
 

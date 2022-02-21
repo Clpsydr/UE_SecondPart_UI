@@ -4,6 +4,8 @@
 #include "EquipComponent.h"
 #include "InventoryCellWidget.h"
 
+#define MAXCRATEDISPLAY 5
+
 UInventoryManagerComponent::UInventoryManagerComponent()
 {
 }
@@ -41,7 +43,7 @@ void UInventoryManagerComponent::InitChest(UInventoryComponent* InInventoryCompo
 		ChestInventoryWidget->AddToViewport();
 		ChestInventoryWidget->ParentInventory = InInventoryComponent;
 
-		ChestInventoryWidget->Init(FMath::Max(5, InInventoryComponent->GetItemsNum()));			// hardcoded magic small crate of 5 because im being lazy
+		ChestInventoryWidget->Init(FMath::Max(MAXCRATEDISPLAY, InInventoryComponent->GetItemsNum()));
 		ChestInventoryWidget->OnItemDrop.AddUObject(this, &ThisClass::OnItemDropFunc);
 
 		for (const auto& Item : InInventoryComponent->GetAllItems())
@@ -63,7 +65,7 @@ void UInventoryManagerComponent::InitInventory(UInventoryComponent* InInventoryC
 		InWidget->AddToViewport();
 		InWidget->ParentInventory = InInventoryComponent;
 
-		InWidget->Init(FMath::Max(5, InInventoryComponent->GetItemsNum()));			// hardcoded magic small crate of 5 because im being lazy
+		InWidget->Init(FMath::Max(MAXCRATEDISPLAY, InInventoryComponent->GetItemsNum()));
 		InWidget->OnItemDrop.AddUObject(this, &ThisClass::OnItemDropFunc);
 
 		for (const auto& Item : InInventoryComponent->GetAllItems())
@@ -225,6 +227,8 @@ void UInventoryManagerComponent::OnItemUseFunc(UInventoryCellWidget* UsedCell)
 
 void UInventoryManagerComponent::OnItemDropFunc(UInventoryCellWidget* FromCell, UInventoryCellWidget* ToCell)
 {
+	///
+	
 	if (FromCell == nullptr || ToCell == nullptr)
 	{
 		return;
@@ -245,42 +249,82 @@ void UInventoryManagerComponent::OnItemDropFunc(UInventoryCellWidget* FromCell, 
 	}
 	const FEquipSlot OverlappedItem = ToCell->GetItemFromSlot();
 	
-	const FEquipItem* FromInfo = GetItemData(DraggedItem.Id);
-	//const FEquipItem* ToInfo = OverlappedItem.Count > 0 ? GetItemData(OverlappedItem.Id) : nullptr; 
+	/// 
 
-	const int32 OverlappedItemAmount = ToInventory->GetMaxItemAmount(ToCell->IndexInInventory, *FromInfo);   
-	
-	if (OverlappedItemAmount == 0)  //dropping if exchanged item doesnt take in anything
+	const FEquipItem* FromInfo = GetItemData(DraggedItem.Id);
+
+	// cant equip or drag into inaccessible inventory
+	if (ToInventory->CheckSlotAvailability(ToCell->IndexInInventory, *FromInfo) == 0)
 	{
 		return;
 	}
-
-	FEquipSlot ReturnedItem = OverlappedItem;							// some naming garbage
-	FEquipSlot DroppedItem = DraggedItem;
-	if (OverlappedItemAmount > 0)
+	
+	// have to swap with something not fitting to equipment in use
+	if (GetItemData(OverlappedItem.Id) && FromInventory->CheckSlotAvailability(FromCell->IndexInInventory, *GetItemData(OverlappedItem.Id)) == 0)
 	{
-		DroppedItem.Count = FMath::Max(OverlappedItemAmount, DraggedItem.Count);
-		if (DraggedItem.Count <= DroppedItem.Count)
-		{
-			ReturnedItem.Id = DroppedItem.Id;		// ???
-			ReturnedItem.Count = DraggedItem.Count - DroppedItem.Count;
-		}
+		GLog->Log(ELogVerbosity::Error, *FString::Printf(TEXT("Item under cursor is %s"), *GetItemData(OverlappedItem.Id)->Name));
+		return;
 	}
+
+	FromCell->Clear();
+
+	FEquipSlot ReturnedItem = OverlappedItem;
+	FEquipSlot DroppedItem = DraggedItem;
 
 	const FEquipItem* ReturnedItemInfo = ReturnedItem.Count > 0 ? GetItemData(ReturnedItem.Id) : nullptr;
 	const FEquipItem* DroppedItemInfo = GetItemData(DroppedItem.Id);
 
-	FromCell->Clear();
 	if (ReturnedItemInfo)
 	{
+		// if swapping occurs, verifying possibility to put item in original slow (in case of equipment inventory)
 		FromCell->AddItemToSlot(ReturnedItem, *ReturnedItemInfo);
-		FromInventory->SetItem(FromCell->IndexInInventory, ReturnedItem);   // issue n1: swapping out with empty slot causes error
+		FromInventory->SetItem(FromCell->IndexInInventory, ReturnedItem);
+	}
+	else
+	{
+		FromInventory->ClearItem(FromCell->IndexInInventory);
+	}
+
+	ToCell->Clear();
+	ToCell->AddItemToSlot(DroppedItem, *DroppedItemInfo);
+	ToInventory->SetItem(ToCell->IndexInInventory, DroppedItem); 
+
+	// TODO: Stackable items in swapping part
+
+	/*FEquipSlot ReturnedItem = OverlappedItem;							// duplicates of slots to avoid losing data
+	FEquipSlot DroppedItem = DraggedItem;
+
+	if (OverlappedItemAmount > 0)	// possible item stacking
+	{
+		DroppedItem.Count = FMath::Max(OverlappedItemAmount, DraggedItem.Count);
+		if (DraggedItem.Count <= DroppedItem.Count)		// counting the amount of stacked items
+		{
+			ReturnedItem.Id = DroppedItem.Id;		
+			ReturnedItem.Count = DraggedItem.Count - DroppedItem.Count;
+		}
+	}
+	
+	//returned item is null there in case somthing got stacked completely, but ...
+	const FEquipItem* ReturnedItemInfo = ReturnedItem.Count > 0 ? GetItemData(ReturnedItem.Id) : nullptr;
+	const FEquipItem* DroppedItemInfo = GetItemData(DroppedItem.Id);
+
+	FromCell->Clear();
+	//...but since we are checking for it, there should be a clear case for swapping
+	// this so far only works for "else" case?!
+	if (ReturnedItemInfo)		// is there anything to return to the original slot?
+	{
+		FromCell->AddItemToSlot(ReturnedItem, *ReturnedItemInfo);
+		FromInventory->SetItem(FromCell->IndexInInventory, ReturnedItem);   
+	}
+	else
+	{
+		FromInventory->ClearItem(FromCell->IndexInInventory);
 	}
 
 	ToCell->Clear();
 	ToCell->AddItemToSlot(DroppedItem, *DroppedItemInfo);
 
-	ToInventory->SetItem(ToCell->IndexInInventory, DroppedItem);
+	ToInventory->SetItem(ToCell->IndexInInventory, DroppedItem);*/
 	
 	FromInventory->ReportItems();
 	ToInventory->ReportItems();

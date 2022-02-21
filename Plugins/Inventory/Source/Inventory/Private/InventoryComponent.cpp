@@ -14,18 +14,19 @@ void UInventoryComponent::ClearItem(int32 SlotIndex)
 	Items.Remove(SlotIndex);
 }
 
-// comparing whether InItem can fit in Slot of SlotIndex
-// returns 0 if slot is occupied by another object
-// -1 if free
-int32 UInventoryComponent::GetMaxItemAmount(int32 SlotIndex, const FEquipItem& InItem)
+// doesn't return 0 as non operational result, beause generic interface takes in any item
+int32 UInventoryComponent::CheckSlotAvailability(int32 SlotIndex, const FEquipItem& InItem)
 {
 	FEquipSlot* SlotPtr = Items.Find(SlotIndex);
-	if (SlotPtr && SlotPtr->Id != InItem.Id)   // should be (SlotPtr == nullptr && SlotPtr->Id == InItem.Id) but it crashes
+		
+	if (SlotPtr && SlotPtr->Id == InItem.Id)
 	{
-		return 0;
+		return 1;		//same object, potentially counting amount of stackable items
 	}
-	return -1;
+
+	return -1;		// different objects or nothing
 }
+
 
 void UInventoryComponent::UseItem(int32 SlotIndex)
 {

@@ -73,7 +73,6 @@ bool UInventoryItem::NativeOnDragOver(const FGeometry& InGeometry, const FDragDr
 		{
 			UMenuAnchor* DraggedMenu = Cast<UMenuAnchor>(VerticalBox->GetChildAt(IndexToAnchors));   //remembering current menu from anchors
 			DraggedMenu->RemoveChildAt(0);
-			
 
 			const TArray<UWidget*> AllAnchors = VerticalBox->GetAllChildren();
 			TArray<UWidget*> RestChildren;
@@ -85,8 +84,6 @@ bool UInventoryItem::NativeOnDragOver(const FGeometry& InGeometry, const FDragDr
 
 			for (int32 i = 0; i < AllAnchors.Num(); i++)
 			{
-				
-				
 				//VerticalBox->AddChildToVerticalBox(RestChildren[i])->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Center);
 
 				if (AllAnchors[i] == DraggedMenu)

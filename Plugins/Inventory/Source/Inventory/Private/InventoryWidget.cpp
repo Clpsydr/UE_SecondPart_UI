@@ -160,8 +160,8 @@ void UInventoryWidget::OnItemUseFunc(UInventoryCellWidget* ThisCell)
 	OnItemUse.Broadcast(ThisCell);
 }
 
-// lazy refresh that just hides existing items. Should probably reinit entire widget from manager
-// but that would require letting widget know manager to reinit the whole widget with new filter
+// lazy refresh that merely hides existing items
+// proper implementation would involve reinitializing widget with specific items to display.
 void UInventoryWidget::RefreshCells(EItemType ByFilter)
 {
 	if (GridWidget)
