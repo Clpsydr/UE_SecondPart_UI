@@ -14,11 +14,6 @@ bool UInventoryCellWidget::AddItemToSlot(const FEquipSlot& ItemSlot, const FEqui
 		return true;
 	}
 
-/*	if (bHasItem)		// occupied slot doesnt assume a new item?
-	{
-		return false;
-	}*/
-
 	if (ItemIcon)		// load image if present or set placeholder
 	{
 		ItemIcon->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
@@ -61,6 +56,7 @@ void UInventoryCellWidget::Clear()
 		Amount->SetVisibility(ESlateVisibility::Collapsed);
 	}
 
+	Item.Id = NAME_None;
 	Item.Count = 0;
 }
 
@@ -89,6 +85,9 @@ void UInventoryCellWidget::NativeOnDragDetected(const FGeometry& InGeometry, con
 	OutOperation = UWidgetBlueprintLibrary::CreateDragDropOperation(UDragDropOperation::StaticClass());
 	if (OutOperation)
 	{
+		OutOperation->OnDragCancelled.AddDynamic(this, &ThisClass::OnDragCancelledHandle);
+		this->SetVisibility(ESlateVisibility::HitTestInvisible);
+		SetColorAndOpacity(FLinearColor(1.f, 0.5f, 0.5f, 0.8f));
 		OutOperation->DefaultDragVisual = this;
 	}
 	else
@@ -104,12 +103,20 @@ bool UInventoryCellWidget::NativeOnDrop(const FGeometry& InGeometry, const FDrag
 		auto* FromCell = Cast<UInventoryCellWidget>(InOperation->DefaultDragVisual);
 		if (FromCell)
 		{
+				FromCell->SetVisibility(ESlateVisibility::Visible);
+				FromCell->SetColorAndOpacity(FLinearColor(1.f, 1.f, 1.f, 1.f));
 				OnItemDrop.Broadcast(FromCell, this);
 				return true;
 		}
 	}
 
 	return Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
+}
+
+void UInventoryCellWidget::OnDragCancelledHandle(UDragDropOperation* Operation)
+{
+	SetColorAndOpacity(FLinearColor(1.f, 1.f, 1.f, 1.f));
+	SetVisibility(ESlateVisibility::Visible);
 }
 
 void UInventoryCellWidget::ChangeVisibility(bool bIsVisible)

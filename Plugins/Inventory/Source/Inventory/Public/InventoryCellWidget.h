@@ -24,8 +24,6 @@ class INVENTORY_API UInventoryCellWidget : public UUserWidget
 		UPROPERTY(BlueprintReadOnly, Meta = (Bindwidget))
 			UTextBlock* Amount;
 
-		//bool bHasItem;
-
 		UPROPERTY()
 			FEquipSlot Item;
 
@@ -33,8 +31,6 @@ class INVENTORY_API UInventoryCellWidget : public UUserWidget
 			UInventoryWidget* ParentInvWidget;
 
 	public:
-		//bool HasItem() const { return bHasItem; }
-
 		bool AddItemToSlot(const FEquipSlot& ItemSlot, const FEquipItem& ItemInfo);
 
 		void ChangeVisibility(bool bIsVisible);
@@ -64,6 +60,9 @@ protected:
 	virtual void NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
 
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+
+	UFUNCTION()
+		void OnDragCancelledHandle(UDragDropOperation* Operation);
 
 	UPROPERTY(EditAnywhere)
 		bool bCanDrag = true;

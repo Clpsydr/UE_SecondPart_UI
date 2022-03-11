@@ -17,7 +17,7 @@ public:
 	UPROPERTY(EditAnywhere)
 		TMap<int32, EEquipType> EquipSlots;
 
-	virtual int32 GetMaxItemAmount(int32 SlotIndex, const FEquipItem& InItem) override;
+	virtual int32 CheckSlotAvailability(int32 SlotIndex, const FEquipItem& InItem) override;
 
 	virtual void SetItem(int32 SlotIndex, const FEquipSlot& Item) override;
 

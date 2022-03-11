@@ -11,16 +11,17 @@ UEquipComponent::UEquipComponent()
 	EquipSlots.Add(5, EEquipType::Es_Buff);
 }
 
-// returns 1 if the type is the appropriate
-int32 UEquipComponent::GetMaxItemAmount(int32 SlotIndex, const FEquipItem& InItem)
+// returns availability code by trying to shove InItem into SlotIndex of current inventory
+int32 UEquipComponent::CheckSlotAvailability(int32 SlotIndex, const FEquipItem& InItem)
 {
 	EEquipType* EquipSlotPtr = EquipSlots.Find(SlotIndex);
+
 	if (InItem.Type == EItemType::It_Equip && EquipSlotPtr && *EquipSlotPtr == InItem.EquipType)
 	{
-		return 1;
+		return -1;		// swappable, considers equip as different by default
 	}
 
-	return 0;
+	return 0; //wrong type
 }
 
 void UEquipComponent::SetItem(int32 SlotIndex, const FEquipSlot& Item)
